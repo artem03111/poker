@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>♠ Покер</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e4e4e7; min-height: 100vh; }
+  #setup-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+  .setup-box { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; }
+  .setup-box h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .setup-box > p { color: #71717a; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+  .setup-step { background: #13151e; border: 1px solid #2a2d3a; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .snum { display: inline-flex; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; font-size: 10px; font-weight: 700; align-items: center; justify-content: center; margin-right: 6px; }
+  .setup-step label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px; }
+  .setup-step input { width: 100%; padding: 9px 12px; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px; color: #e4e4e7; font-size: 13px; outline: none; }
+  .setup-step input:focus { border-color: #3b82f6; }
+  .hint { font-size: 11px; color: #52525b; margin-top: 6px; line-height: 1.5; }
+  .fblink { display: inline-block; padding: 7px 14px; background: #1d4ed8; border-radius: 7px; color: #fff; font-size: 13px; text-decoration: none; margin-bottom: 8px; }
+  .btn-primary { width: 100%; padding: 12px; background: #3b82f6; border: none; border-radius: 10px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+  .btn-primary:hover { background: #2563eb; }
+  #setup-error { color: #f87171; font-size: 13px; margin-top: 8px; display: none; }
+  #app { display: none; max-width: 600px; margin: 0 auto; padding: 0 16px 80px; }
+  .app-header { padding: 20px 0 0; border-bottom: 1px solid #2a2d3a; }
+  .app-header-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; }
+  .app-title { font-size: 20px; font-weight: 700; }
+  .app-sub { font-size: 12px; color: #52525b; margin-top: 2px; }
+  .tabs { display: flex; }
+  .tab-btn { padding: 10px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: #71717a; border-bottom: 2px solid transparent; }
+  .tab-btn.active { color: #e4e4e7; border-bottom-color: #3b82f6; }
+  .section { padding: 20px 0 0; }
+  .card { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+  .balance-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .balance-card { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 12px; padding: 14px; }
+  .balance-name { font-size: 12px; color: #71717a; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .balance-val { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .green { color: #4ade80; } .red { color: #f87171; } .gray { color: #52525b; }
+  .debt-card { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .debt-person { font-size: 13px; font-weight: 600; }
+  .btn { padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #2a2d3a; background: #13151e; color: #a1a1aa; }
+  .btn:hover { background: #2a2d3a; }
+  .btn-blue { background: #1d4ed8; border-color: #2563eb; color: #fff; }
+  .btn-blue:hover { background: #2563eb; }
+  .btn-danger { background: transparent; border-color: transparent; color: #f87171; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-add { width: 100%; padding: 11px; background: #1d4ed8; border: none; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-add:hover { background: #2563eb; }
+  .flabel { font-size: 11px; color: #52525b; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
+  .finput { width: 100%; padding: 9px 12px; background: #13151e; border: 1px solid #2a2d3a; border-radius: 8px; color: #e4e4e7; font-size: 14px; outline: none; }
+  .finput:focus { border-color: #3b82f6; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .entry-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 10px; margin-bottom: 8px; }
+  .entry-name { font-size: 13px; font-weight: 500; min-width: 70px; flex-shrink: 0; }
+  .einput { flex: 1; padding: 6px 10px; background: #13151e; border: 1px solid #2a2d3a; border-radius: 6px; color: #e4e4e7; font-size: 13px; outline: none; text-align: right; }
+  .einput:focus { border-color: #3b82f6; }
+  .session-entry-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #13151e; font-size: 13px; }
+  .session-meta { font-size: 12px; color: #52525b; margin-top: 8px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .tag-done { background: #14532d; color: #4ade80; } .tag-open { background: #451a03; color: #fb923c; }
+  .avatar { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .empty { text-align: center; padding: 48px 0; color: #52525b; }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty p { font-size: 14px; margin-bottom: 16px; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: flex; align-items: flex-end; justify-content: center; z-index: 100; }
+  .modal { background: #1c1f2a; border-radius: 20px 20px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 17px; font-weight: 700; }
+  @media(min-width:500px) { .modal-overlay { align-items: center; } .modal { border-radius: 16px; } }
+  #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #52525b; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div id="loading">Загрузка...</div>
+
+<div id="setup-screen" style="display:none">
+  <div class="setup-box">
+    <h1>♠ Покер-трекер</h1>
+    <p>Нужна бесплатная Firebase чтобы все видели одни данные. Займёт ~3 мин.</p>
+    <div class="setup-step">
+      <label><span class="snum">1</span>Создай проект Firebase</label>
+      <a class="fblink" href="https://console.firebase.google.com" target="_blank">Открыть Firebase Console →</a>
+      <div class="hint">«Добавить проект» → имя → отключи Analytics → создай</div>
+    </div>
+    <div class="setup-step">
+      <label><span class="snum">2</span>Создай Realtime Database</label>
+      <div class="hint">В меню: Сборка → Realtime Database → Создать базу данных → любой регион → «Начать в тестовом режиме»</div>
+    </div>
+    <div class="setup-step">
+      <label><span class="snum">3</span>Ссылка на базу данных</label>
+      <input type="text" id="db-url" placeholder="https://my-project-default-rtdb.firebaseio.com">
+      <div class="hint">Видна вверху страницы Realtime Database</div>
+    </div>
+    <div class="setup-step">
+      <label><span class="snum">4</span>Web API Key и Project ID</label>
+      <input type="text" id="api-key" placeholder="API Key (AIza...)" style="margin-bottom:8px">
+      <input type="text" id="project-id" placeholder="Project ID (my-project-12345)">
+      <div class="hint">Настройки проекта (⚙️) → «Общие» → добавь Web-приложение → скопируй apiKey и projectId</div>
+    </div>
+    <button class="btn-primary" onclick="saveConfig()">Готово →</button>
+    <div id="setup-error"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="app-header">
+    <div class="app-header-top">
+      <div>
+        <div class="app-title">♠ Покер</div>
+        <div class="app-sub" id="app-sub"></div>
+      </div>
+      <button class="btn btn-blue" onclick="openNewSession()">+ Игра</button>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('overview',this)">Обзор</button>
+      <button class="tab-btn" onclick="showTab('sessions',this)">Игры</button>
+      <button class="tab-btn" onclick="showTab('players',this)">Игроки</button>
+    </div>
+  </div>
+  <div id="tab-overview" class="section">
+    <div id="balance-grid" class="balance-grid"></div>
+    <div class="flabel" style="margin-bottom:10px">Кто кому должен</div>
+    <div id="debts-list"></div>
+  </div>
+  <div id="tab-sessions" class="section" style="display:none"><div id="sessions-list"></div></div>
+  <div id="tab-players" class="section" style="display:none">
+    <div class="flabel" style="margin-bottom:8px">Добавить игрока</div>
+    <div style="display:flex;gap:8px;margin-bottom:24px">
+      <input class="finput" id="new-player-input" placeholder="Имя" onkeydown="if(event.key==='Enter')addPlayer()" style="flex:1">
+      <button class="btn btn-blue" onclick="addPlayer()">Добавить</button>
+    </div>
+    <div class="flabel" style="margin-bottom:10px">Игроки</div>
+    <div id="players-list"></div>
+  </div>
+</div>
+
+<div id="session-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div class="modal-title" id="modal-title">Новая игра</div>
+      <button class="btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div><div class="flabel">Название</div><input class="finput" id="session-name" placeholder="Игра 1"></div>
+      <div><div class="flabel">Дата</div><input class="finput" type="date" id="session-date"></div>
+    </div>
+    <div class="flabel" style="margin-bottom:10px">Игроки</div>
+    <div id="session-entries"></div>
+    <button class="btn-add" style="margin-top:8px" onclick="saveSession()">Сохранить</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue, set, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const CONFIG_KEY = 'poker_firebase_config';
+let db;
+let state = { players: {}, sessions: {} };
+let editingSessionId = null;
+
+function getConfig() { try { return JSON.parse(localStorage.getItem(CONFIG_KEY)); } catch { return null; } }
+
+window.saveConfig = function() {
+  const dbUrl = document.getElementById('db-url').value.trim();
+  const apiKey = document.getElementById('api-key').value.trim();
+  const projectId = document.getElementById('project-id').value.trim();
+  const err = document.getElementById('setup-error');
+  if (!dbUrl || !apiKey || !projectId) { err.textContent = 'Заполни все поля'; err.style.display = 'block'; return; }
+  if (!dbUrl.startsWith('https://')) { err.textContent = 'URL должен начинаться с https://'; err.style.display = 'block'; return; }
+  localStorage.setItem(CONFIG_KEY, JSON.stringify({ apiKey, databaseURL: dbUrl, projectId, authDomain: `${projectId}.firebaseapp.com` }));
+  window.location.reload();
+};
+
+async function initApp(config) {
+  try {
+    const app = initializeApp(config);
+    db = getDatabase(app);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    onValue(ref(db, '/'), (snap) => {
+      state = snap.val() || {};
+      if (!state.players) state.players = {};
+      if (!state.sessions) state.sessions = {};
+      render();
+    });
+  } catch(e) {
+    console.error(e);
+    localStorage.removeItem(CONFIG_KEY);
+    window.location.reload();
+  }
+}
+
+const config = getConfig();
+if (config) { initApp(config); }
+else { document.getElementById('loading').style.display = 'none'; document.getElementById('setup-screen').style.display = 'flex'; }
+
+const COLORS = ['#3b82f6','#8b5cf6','#ec4899','#10b981','#f59e0b','#ef4444','#06b6d4','#84cc16'];
+function aColor(name) { return COLORS[(name||'?').charCodeAt(0) % COLORS.length]; }
+function av(name, size=28) {
+  const i = (name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  return `<div class="avatar" style="width:${size}px;height:${size}px;min-width:${size}px;font-size:${Math.round(size*.36)}px;background:${aColor(name)}">${i}</div>`;
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function fmt(v) { return (v>=0?'+':'')+Math.round(v)+'₽'; }
+
+function calcNet() {
+  const net = {};
+  Object.values(state.players||{}).forEach(p => net[p.id] = 0);
+  Object.values(state.sessions||{}).forEach(s => {
+    Object.values(s.entries||{}).forEach(e => {
+      if (net[e.playerId] !== undefined) net[e.playerId] += (e.cashout ?? e.buyin) - e.buyin;
+    });
+  });
+  return net;
+}
+
+function calcDebts(net, players) {
+  const pos = [], neg = [];
+  Object.entries(net).forEach(([id, val]) => {
+    const name = players[id]?.name || id;
+    if (val > 0.5) pos.push({ name, val });
+    else if (val < -0.5) neg.push({ name, val: -val });
+  });
+  pos.sort((a,b)=>b.val-a.val); neg.sort((a,b)=>b.val-a.val);
+  const debts = [];
+  let i=0, j=0;
+  while (i<pos.length && j<neg.length) {
+    const amt = Math.min(pos[i].val, neg[j].val);
+    debts.push({ from: neg[j].name, to: pos[i].name, amount: amt });
+    pos[i].val -= amt; neg[j].val -= amt;
+    if (pos[i].val < 0.5) i++;
+    if (neg[j].val < 0.5) j++;
+  }
+  return debts;
+}
+
+function render() {
+  const players = state.players || {};
+  const sessions = state.sessions || {};
+  const pArr = Object.values(players);
+  const sArr = Object.values(sessions).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const net = calcNet();
+  const debts = calcDebts({...net}, players);
+
+  document.getElementById('app-sub').textContent = `${pArr.length} игроков · ${sArr.length} игр`;
+
+  const bg = document.getElementById('balance-grid');
+  if (!pArr.length) {
+    bg.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🃏</div><p>Добавь игроков на вкладке «Игроки»</p></div>';
+  } else {
+    bg.innerHTML = pArr.map(p => {
+      const v = net[p.id]||0;
+      return `<div class="balance-card"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">${av(p.name,24)}<div class="balance-name">${p.name}</div></div><div class="balance-val ${v>0?'green':v<0?'red':'gray'}">${fmt(v)}</div></div>`;
+    }).join('');
+  }
+
+  const dl = document.getElementById('debts-list');
+  if (!pArr.length) { dl.innerHTML=''; }
+  else if (!debts.length) {
+    dl.innerHTML = '<div class="card" style="text-align:center;color:#52525b;padding:20px">Все в расчёте 🎉</div>';
+  } else {
+    dl.innerHTML = debts.map(d => `
+      <div class="debt-card">
+        <div style="display:flex;align-items:center;gap:8px">${av(d.from)}<div class="debt-person">${d.from}</div></div>
+        <div style="text-align:center;font-size:12px;color:#52525b">──${Math.round(d.amount)}₽──▶</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-direction:row-reverse">${av(d.to)}<div class="debt-person">${d.to}</div></div>
+      </div>`).join('');
+  }
+
+  const sl = document.getElementById('sessions-list');
+  if (!sArr.length) {
+    sl.innerHTML = '<div class="empty"><div class="empty-icon">🎲</div><p>Нет игр</p><button class="btn btn-blue" onclick="openNewSession()">+ Новая игра</button></div>';
+  } else {
+    sl.innerHTML = sArr.map(s => {
+      const entries = Object.values(s.entries||{});
+      const totalBuy = entries.reduce((a,e)=>a+(e.buyin||0),0);
+      const done = entries.length > 0 && entries.every(e=>e.cashout!=null);
+      const dateStr = s.date ? new Date(s.date+'T00:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}) : '';
+      const rows = entries.map(e => {
+        const pName = players[e.playerId]?.name||'?';
+        const diff = e.cashout != null ? e.cashout - e.buyin : null;
+        return `<div class="session-entry-row">
+          <div style="display:flex;align-items:center;gap:6px">${av(pName,20)}<span>${pName}</span></div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="color:#52525b">вход: <b style="color:#a1a1aa">${e.buyin}₽</b></span>
+            ${e.cashout!=null?`<span style="color:#52525b">выход: <b style="color:#a1a1aa">${e.cashout}₽</b></span>`:''}
+            ${diff!==null?`<span style="font-weight:700;color:${diff>=0?'#4ade80':'#f87171'}">${fmt(diff)}</span>`:''}
+          </div>
+        </div>`;
+      }).join('');
+      return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div><div style="font-size:15px;font-weight:600">${s.name||'Игра'}</div><div style="font-size:12px;color:#52525b;margin-top:2px">${dateStr}</div></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="tag ${done?'tag-done':'tag-open'}">${done?'закрыта':'идёт'}</span>
+            <button class="btn btn-sm" onclick='editSession("${s.id}")'>✏️</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteSession("${s.id}")'>✕</button>
+          </div>
+        </div>
+        ${rows}
+        <div class="session-meta">Банк: ${totalBuy}₽ · ${entries.length} игроков</div>
+      </div>`;
+    }).join('');
+  }
+
+  const pl = document.getElementById('players-list');
+  if (!pArr.length) {
+    pl.innerHTML = '<div style="color:#52525b;font-size:14px;padding:12px 0">Пока никого нет</div>';
+  } else {
+    pl.innerHTML = pArr.map(p => {
+      const v = net[p.id]||0;
+      const gp = sArr.filter(s=>Object.values(s.entries||{}).some(e=>e.playerId===p.id)).length;
+      return `<div class="card" style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:10px">${av(p.name,34)}<div><div style="font-size:14px;font-weight:600">${p.name}</div><div style="font-size:12px;color:#52525b">${gp} игр</div></div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="font-size:16px;font-weight:700;color:${v>0?'#4ade80':v<0?'#f87171':'#52525b'}">${fmt(v)}</div>
+          <button class="btn btn-sm btn-danger" onclick='removePlayer("${p.id}")'>✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+window.showTab = function(name, btn) {
+  ['overview','sessions','players'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'block':'none');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+};
+
+window.addPlayer = async function() {
+  const inp = document.getElementById('new-player-input');
+  const name = inp.value.trim(); if (!name) return;
+  const id = uid();
+  await set(ref(db, `/players/${id}`), { id, name });
+  inp.value = '';
+};
+
+window.removePlayer = async function(id) {
+  if (!confirm('Удалить игрока?')) return;
+  await remove(ref(db, `/players/${id}`));
+};
+
+function entryRow(playerId, name, buyin, cashout) {
+  return `<div class="entry-row">
+    ${av(name,26)}
+    <div class="entry-name">${name}</div>
+    <div style="flex:1"><div style="font-size:10px;color:#52525b;margin-bottom:3px">Депозит</div><input class="einput" type="number" placeholder="0" value="${buyin}" data-player="${playerId}" data-field="buyin"></div>
+    <div style="flex:1"><div style="font-size:10px;color:#52525b;margin-bottom:3px">Кэшаут</div><input class="einput" type="number" placeholder="—" value="${cashout}" data-player="${playerId}" data-field="cashout"></div>
+  </div>`;
+}
+
+window.openNewSession = function() {
+  editingSessionId = null;
+  document.getElementById('modal-title').textContent = 'Новая игра';
+  const players = Object.values(state.players||{});
+  document.getElementById('session-name').value = `Игра ${Object.keys(state.sessions||{}).length+1}`;
+  document.getElementById('session-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('session-entries').innerHTML = players.length
+    ? players.map(p=>entryRow(p.id,p.name,'','')).join('')
+    : '<div style="color:#52525b;font-size:13px">Сначала добавь игроков</div>';
+  document.getElementById('session-modal').style.display = 'flex';
+};
+
+window.editSession = function(id) {
+  editingSessionId = id;
+  const s = state.sessions[id]; if (!s) return;
+  document.getElementById('modal-title').textContent = 'Редактировать';
+  document.getElementById('session-name').value = s.name||'';
+  document.getElementById('session-date').value = s.date||'';
+  const players = Object.values(state.players||{});
+  document.getElementById('session-entries').innerHTML = players.map(p => {
+    const e = Object.values(s.entries||{}).find(x=>x.playerId===p.id);
+    return entryRow(p.id, p.name, e?.buyin??'', e?.cashout??'');
+  }).join('');
+  document.getElementById('session-modal').style.display = 'flex';
+};
+
+window.saveSession = async function() {
+  const name = document.getElementById('session-name').value.trim()||'Игра';
+  const date = document.getElementById('session-date').value;
+  const inputs = document.querySelectorAll('#session-entries [data-player]');
+  const em = {};
+  inputs.forEach(inp => {
+    const pid = inp.dataset.player;
+    if (!em[pid]) em[pid] = { playerId: pid };
+    const v = inp.value.trim();
+    if (inp.dataset.field==='buyin') em[pid].buyin = v===''?0:parseFloat(v)||0;
+    if (inp.dataset.field==='cashout' && v!=='') em[pid].cashout = parseFloat(v)||0;
+  });
+  const entries = {};
+  Object.values(em).forEach(e => { if (e.buyin>0||e.cashout!=null) entries[uid()] = e; });
+  const id = editingSessionId||uid();
+  await set(ref(db, `/sessions/${id}`), { id, name, date, entries });
+  closeModal();
+};
+
+window.deleteSession = async function(id) {
+  if (!confirm('Удалить игру?')) return;
+  await remove(ref(db, `/sessions/${id}`));
+};
+
+window.closeModal = function() { document.getElementById('session-modal').style.display = 'none'; };
+</script>
+</body>
+</html>
