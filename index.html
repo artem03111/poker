@@ -2,316 +2,310 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>♠ Покер</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e4e4e7; min-height: 100vh; }
-#loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #52525b; }
-#app { display: none; max-width: 600px; margin: 0 auto; padding: 0 16px 80px; }
-.hdr { padding: 18px 0 0; border-bottom: 1px solid #2a2d3a; }
-.hdr-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; }
-.htitle { font-size: 20px; font-weight: 700; }
-.hsub { font-size: 12px; color: #52525b; margin-top: 2px; }
-.tabs { display: flex; }
-.tbtn { padding: 10px 15px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: #71717a; border-bottom: 2px solid transparent; }
-.tbtn.on { color: #e4e4e7; border-bottom-color: #3b82f6; }
-.sec { padding: 18px 0 0; }
-.card { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 12px; padding: 13px 15px; margin-bottom: 9px; }
-.bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 9px; margin-bottom: 22px; }
-.bcrd { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 12px; padding: 13px; }
-.bname { font-size: 12px; color: #71717a; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bval { font-size: 21px; font-weight: 700; letter-spacing: -0.02em; }
-.g { color: #4ade80; } .r { color: #f87171; } .gr { color: #52525b; }
-.dcard { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 12px; padding: 13px 15px; margin-bottom: 9px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.dperson { font-size: 13px; font-weight: 600; }
-.btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #2a2d3a; background: #13151e; color: #a1a1aa; }
-.btn:hover { background: #2a2d3a; }
-.bblu { background: #1d4ed8; border-color: #2563eb; color: #fff; }
-.bblu:hover { background: #2563eb; }
-.bdng { background: transparent; border-color: transparent; color: #f87171; }
-.bsm { padding: 4px 9px; font-size: 12px; }
-.badd { width: 100%; padding: 10px; background: #1d4ed8; border: none; border-radius: 9px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
-.badd:hover { background: #2563eb; }
-.fl { font-size: 11px; color: #52525b; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 5px; }
-.fi { width: 100%; padding: 8px 11px; background: #13151e; border: 1px solid #2a2d3a; border-radius: 8px; color: #e4e4e7; font-size: 14px; outline: none; }
-.fi:focus { border-color: #3b82f6; }
-.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 14px; }
-.erow { display: flex; align-items: center; gap: 9px; padding: 9px 13px; background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 9px; margin-bottom: 7px; }
-.ename { font-size: 13px; font-weight: 500; min-width: 68px; flex-shrink: 0; }
-.einp { flex: 1; padding: 5px 9px; background: #13151e; border: 1px solid #2a2d3a; border-radius: 6px; color: #e4e4e7; font-size: 13px; outline: none; text-align: right; }
-.einp:focus { border-color: #3b82f6; }
-.serow { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #13151e; font-size: 13px; }
-.smeta { font-size: 12px; color: #52525b; margin-top: 7px; }
-.tag { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600; }
-.tdone { background: #14532d; color: #4ade80; } .topen { background: #451a03; color: #fb923c; }
-.av { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700; color: #fff; flex-shrink: 0; }
-.empty { text-align: center; padding: 44px 0; color: #52525b; }
-.eico { font-size: 34px; margin-bottom: 11px; }
-.empty p { font-size: 14px; margin-bottom: 14px; }
-.moverlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: flex; align-items: flex-end; justify-content: center; z-index: 100; }
-.modal { background: #1c1f2a; border-radius: 20px 20px 0 0; padding: 22px 18px 30px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-.mtitle { font-size: 17px; font-weight: 700; }
-@media(min-width:500px) { .moverlay { align-items: center; } .modal { border-radius: 16px; } }
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#c9a84c;--gold2:#e8c97a;
+  --felt:#0d3320;--felt2:#0a2a1a;--felt3:#112d1f;
+  --border:#1e3d28;--red:#f87171;--green:#4ade80;
+  --text:#f0ece0;--muted:#6a8a6a;
+}
+html,body{min-height:100%;background:var(--felt);color:var(--text);font-family:'Inter',sans-serif;}
+body{background-image:radial-gradient(ellipse at 50% 0%,#1a4a2a 0%,var(--felt) 60%);}
+
+/* HEADER */
+.header{background:var(--felt2);border-bottom:1px solid var(--border);padding:0 16px;}
+.header-top{display:flex;justify-content:space-between;align-items:center;padding:14px 0 12px;}
+.logo-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--gold);letter-spacing:.02em;}
+.logo-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.btn-new{background:linear-gradient(135deg,#c9a84c,#e8c97a);border:none;border-radius:10px;color:#1a1200;font-size:13px;font-weight:700;padding:10px 18px;cursor:pointer;}
+.btn-new:active{opacity:.8;}
+.tabs{display:flex;}
+.tab{flex:1;padding:11px 0;font-size:14px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;letter-spacing:.02em;}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* SUITS */
+.suits{display:flex;justify-content:center;gap:16px;padding:14px 0 6px;opacity:.1;font-size:22px;pointer-events:none;user-select:none;}
+
+/* SECTION */
+.sec{padding:14px 16px 0;}
+.stitle{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.stitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+/* SESSION CARD */
+.scard{background:var(--felt3);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.scard-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.scard-title{font-size:16px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold2);}
+.scard-date{font-size:11px;color:var(--muted);margin-top:2px;}
+.scard-actions{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.tdone{background:#14532d;color:#4ade80;} .topen{background:#451a03;color:#fb923c;}
+.serow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;}
+.serow:last-child{border-bottom:none;}
+.serow-left{display:flex;align-items:center;gap:8px;}
+.serow-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+.smeta{font-size:11px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.05);}
+
+/* PLAYER CARD */
+.pcard{background:var(--felt3);border:1px solid var(--border);border-radius:14px;padding:13px 14px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;}
+
+/* AVATAR */
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;color:#fff;flex-shrink:0;}
+
+/* BUTTONS */
+.btn{padding:7px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--muted);}
+.btn-gold{background:linear-gradient(135deg,#c9a84c,#e8c97a);border:none;color:#1a1200;font-weight:700;}
+.btn-danger{background:transparent;border:none;color:var(--red);padding:6px 8px;cursor:pointer;font-size:15px;}
+.btn-sm{padding:5px 9px;font-size:12px;}
+.btn-full{width:100%;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#1a1200;letter-spacing:.02em;}
+.btn-full:active{opacity:.85;}
+
+/* FORM */
+.fi{width:100%;padding:11px 13px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;outline:none;font-family:'Inter',sans-serif;}
+.fi:focus{border-color:var(--gold);}
+.fi::placeholder{color:var(--muted);}
+.fl{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.add-row{display:flex;gap:9px;margin-bottom:20px;}
+.add-row .fi{flex:1;}
+
+/* ENTRY CARD IN MODAL */
+.ecard{background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:12px;padding:11px 12px;margin-bottom:8px;}
+.ecard-top{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.ecard-name{font-size:14px;font-weight:600;}
+.einputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.einp-wrap{display:flex;flex-direction:column;gap:4px;}
+.einp-label{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+.einp{width:100%;padding:10px;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;outline:none;text-align:center;font-family:'Inter',sans-serif;}
+.einp:focus{border-color:var(--gold);}
+.einp::placeholder{color:var(--muted);}
+
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:flex-end;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
+.modal{background:var(--felt2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:18px 16px 36px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
+.modal-handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:0 auto 16px;}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.mtitle{font-size:18px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold);}
+@media(min-width:500px){.moverlay{align-items:center;}.modal{border-radius:20px;}}
+
+/* EMPTY */
+.empty{text-align:center;padding:52px 0;color:var(--muted);}
+.eico{font-size:44px;margin-bottom:12px;opacity:.5;}
+.empty p{font-size:14px;margin-bottom:16px;}
+
+/* LOADING */
+#loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:12px;}
+.load-icon{font-size:48px;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.load-text{color:var(--muted);font-size:13px;}
 </style>
 </head>
 <body>
 
-<div id="loading">Загрузка...</div>
+<div id="loading">
+  <div class="load-icon">♠</div>
+  <div class="load-text">Загрузка...</div>
+</div>
 
-<div id="app">
-  <div class="hdr">
-    <div class="hdr-top">
-      <div><div class="htitle">♠ Покер</div><div class="hsub" id="hsub"></div></div>
-      <button class="btn bblu" onclick="openNewSession()">+ Игра</button>
+<div id="app" style="display:none;padding-bottom:30px;">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="logo-text">♠ Покер</div>
+        <div class="logo-sub" id="hsub">...</div>
+      </div>
+      <button class="btn-new" onclick="openNewSession()">+ Новая игра</button>
     </div>
     <div class="tabs">
-      <button class="tbtn on" onclick="showTab('ov',this)">Обзор</button>
-      <button class="tbtn" onclick="showTab('se',this)">Игры</button>
-      <button class="tbtn" onclick="showTab('pl',this)">Игроки</button>
+      <button class="tab on" onclick="showTab('se',this)">♥ Игры</button>
+      <button class="tab" onclick="showTab('pl',this)">♣ Игроки</button>
     </div>
   </div>
-  <div id="t-ov" class="sec">
-    <div id="bgrid" class="bgrid"></div>
-    <div class="fl" style="margin-bottom:9px">Кто кому должен</div>
-    <div id="dlist"></div>
+
+  <!-- GAMES -->
+  <div id="t-se" class="sec">
+    <div class="suits">♠ ♥ ♦ ♣</div>
+    <div id="slist"></div>
   </div>
-  <div id="t-se" class="sec" style="display:none"><div id="slist"></div></div>
-  <div id="t-pl" class="sec" style="display:none">
-    <div class="fl" style="margin-bottom:7px">Добавить игрока</div>
-    <div style="display:flex;gap:8px;margin-bottom:22px">
-      <input class="fi" id="plinput" placeholder="Имя" onkeydown="if(event.key==='Enter')addPlayer()" style="flex:1">
-      <button class="btn bblu" onclick="addPlayer()">Добавить</button>
+
+  <!-- PLAYERS -->
+  <div id="t-pl" class="sec" style="display:none;">
+    <div class="suits">♣ ♠ ♥ ♦</div>
+    <div class="fl" style="margin-bottom:8px">Добавить игрока</div>
+    <div class="add-row">
+      <input class="fi" id="plinput" placeholder="Имя игрока" onkeydown="if(event.key==='Enter')addPlayer()">
+      <button class="btn btn-gold" onclick="addPlayer()">Добавить</button>
     </div>
-    <div class="fl" style="margin-bottom:9px">Игроки</div>
+    <div class="stitle">Список</div>
     <div id="plist"></div>
   </div>
 </div>
 
+<!-- MODAL -->
 <div id="modal" class="moverlay" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
       <div class="mtitle" id="mtitle">Новая игра</div>
-      <button class="btn" onclick="closeModal()">✕</button>
+      <button class="btn btn-sm" onclick="closeModal()">✕</button>
     </div>
     <div class="fgrid">
       <div><div class="fl">Название</div><input class="fi" id="mname" placeholder="Игра 1"></div>
       <div><div class="fl">Дата</div><input class="fi" type="date" id="mdate"></div>
     </div>
-    <div class="fl" style="margin-bottom:9px">Игроки</div>
+    <div class="fl" style="margin-bottom:10px">Участники</div>
     <div id="mentries"></div>
-    <button class="badd" style="margin-top:7px" onclick="saveSession()">Сохранить</button>
+    <button class="btn-full" style="margin-top:12px" onclick="saveSession()">Сохранить</button>
   </div>
 </div>
 
 <script>
-var db = null;
-var state = { players: {}, sessions: {} };
-var editId = null;
+var db=null, state={players:{},sessions:{}}, editId=null;
+var SUITS=['♠','♥','♦','♣'];
+var COLS=['#e63946','#2196f3','#4caf50','#ff9800','#9c27b0','#00bcd4','#f06292','#8bc34a'];
 
 firebase.initializeApp({
-  apiKey: "AIzaSyBFT4ctpoM7DzAhh-locoQcusxGG8SiH-k",
-  databaseURL: "https://poker-6d7d1-default-rtdb.firebaseio.com/",
-  projectId: "poker-6d7d1",
-  authDomain: "poker-6d7d1.firebaseapp.com"
+  apiKey:"AIzaSyBFT4ctpoM7DzAhh-locoQcusxGG8SiH-k",
+  databaseURL:"https://poker-6d7d1-default-rtdb.firebaseio.com/",
+  projectId:"poker-6d7d1",
+  authDomain:"poker-6d7d1.firebaseapp.com"
 });
 
-db = firebase.database();
-document.getElementById('loading').style.display = 'none';
-document.getElementById('app').style.display = 'block';
-
-db.ref('/').on('value', function(snap) {
-  state = snap.val() || {};
-  if (!state.players) state.players = {};
-  if (!state.sessions) state.sessions = {};
+db=firebase.database();
+document.getElementById('loading').style.display='none';
+document.getElementById('app').style.display='block';
+db.ref('/').on('value',function(snap){
+  state=snap.val()||{};
+  if(!state.players)state.players={};
+  if(!state.sessions)state.sessions={};
   render();
-}, function(err) {
-  alert('Ошибка Firebase: ' + err.message);
-});
+},function(err){alert('Ошибка: '+err.message);});
 
-var COLS = ['#3b82f6','#8b5cf6','#ec4899','#10b981','#f59e0b','#ef4444','#06b6d4','#84cc16'];
-function acol(n) { return COLS[(n||'?').charCodeAt(0) % COLS.length]; }
-function av(n, s) {
-  s = s || 28;
-  var i = (n||'?').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
-  return '<div class="av" style="width:'+s+'px;height:'+s+'px;min-width:'+s+'px;font-size:'+Math.round(s*.36)+'px;background:'+acol(n)+'">'+i+'</div>';
+function acol(n){return COLS[(n||'?').charCodeAt(0)%COLS.length];}
+function av(n,s){
+  s=s||30;
+  var i=(n||'?').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  return '<div class="av" style="width:'+s+'px;height:'+s+'px;min-width:'+s+'px;font-size:'+Math.round(s*.35)+'px;background:'+acol(n)+'">'+i+'</div>';
 }
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function fmt(v) { return (v>=0?'+':'')+Math.round(v)+'₽'; }
+function suit(n){return SUITS[(n||'?').charCodeAt(0)%4];}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function fmt(v){return (v>=0?'+':'')+Math.round(v)+'€';}
 
-function calcNet() {
-  var net = {};
-  Object.values(state.players||{}).forEach(function(p){ net[p.id]=0; });
-  Object.values(state.sessions||{}).forEach(function(s){
-    Object.values(s.entries||{}).forEach(function(e){
-      if (net[e.playerId] !== undefined) net[e.playerId] += (e.cashout != null ? e.cashout : e.buyin) - e.buyin;
-    });
-  });
-  return net;
-}
+function render(){
+  var players=state.players||{}, sessions=state.sessions||{};
+  var pArr=Object.values(players);
+  var sArr=Object.values(sessions).sort(function(a,b){return(b.date||'').localeCompare(a.date||'');});
 
-function calcDebts(net, players) {
-  var pos=[], neg=[];
-  Object.entries(net).forEach(function(kv){
-    var id=kv[0], val=kv[1];
-    var name = (players[id]||{}).name || id;
-    if (val > 0.5) pos.push({name:name, val:val});
-    else if (val < -0.5) neg.push({name:name, val:-val});
-  });
-  pos.sort(function(a,b){return b.val-a.val;}); neg.sort(function(a,b){return b.val-a.val;});
-  var debts=[], i=0, j=0;
-  while (i<pos.length && j<neg.length) {
-    var amt = Math.min(pos[i].val, neg[j].val);
-    debts.push({from:neg[j].name, to:pos[i].name, amount:amt});
-    pos[i].val -= amt; neg[j].val -= amt;
-    if (pos[i].val < 0.5) i++;
-    if (neg[j].val < 0.5) j++;
-  }
-  return debts;
-}
+  document.getElementById('hsub').textContent=pArr.length+' игроков · '+sArr.length+' игр';
 
-function render() {
-  var players = state.players||{};
-  var sessions = state.sessions||{};
-  var pArr = Object.values(players);
-  var sArr = Object.values(sessions).sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
-  var net = calcNet();
-  var debts = calcDebts(JSON.parse(JSON.stringify(net)), players);
-
-  document.getElementById('hsub').textContent = pArr.length+' игроков · '+sArr.length+' игр';
-
-  var bg = document.getElementById('bgrid');
-  if (!pArr.length) {
-    bg.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="eico">🃏</div><p>Добавь игроков на вкладке «Игроки»</p></div>';
+  // SESSIONS
+  var sl=document.getElementById('slist');
+  if(!sArr.length){
+    sl.innerHTML='<div class="empty"><div class="eico">🎲</div><p>Нет игр</p><button class="btn btn-gold" onclick="openNewSession()">+ Новая игра</button></div>';
   } else {
-    bg.innerHTML = pArr.map(function(p){
-      var v = net[p.id]||0;
-      return '<div class="bcrd"><div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">'+av(p.name,24)+'<div class="bname">'+p.name+'</div></div><div class="bval '+(v>0?'g':v<0?'r':'gr')+'">'+fmt(v)+'</div></div>';
-    }).join('');
-  }
-
-  var dl = document.getElementById('dlist');
-  if (!pArr.length) { dl.innerHTML=''; }
-  else if (!debts.length) {
-    dl.innerHTML='<div class="card" style="text-align:center;color:#52525b;padding:18px">Все в расчёте 🎉</div>';
-  } else {
-    dl.innerHTML = debts.map(function(d){
-      return '<div class="dcard"><div style="display:flex;align-items:center;gap:8px">'+av(d.from)+'<div class="dperson">'+d.from+'</div></div><div style="text-align:center;font-size:12px;color:#52525b">──'+Math.round(d.amount)+'₽──▶</div><div style="display:flex;align-items:center;gap:8px;flex-direction:row-reverse">'+av(d.to)+'<div class="dperson">'+d.to+'</div></div></div>';
-    }).join('');
-  }
-
-  var sl = document.getElementById('slist');
-  if (!sArr.length) {
-    sl.innerHTML='<div class="empty"><div class="eico">🎲</div><p>Нет игр</p><button class="btn bblu" onclick="openNewSession()">+ Новая игра</button></div>';
-  } else {
-    sl.innerHTML = sArr.map(function(s){
-      var entries = Object.values(s.entries||{});
-      var totalBuy = entries.reduce(function(a,e){return a+(e.buyin||0);},0);
-      var done = entries.length>0 && entries.every(function(e){return e.cashout!=null;});
-      var dateStr = s.date ? new Date(s.date+'T00:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}) : '';
-      var rows = entries.map(function(e){
-        var pName = (players[e.playerId]||{}).name||'?';
-        var diff = e.cashout!=null ? e.cashout-e.buyin : null;
-        return '<div class="serow"><div style="display:flex;align-items:center;gap:6px">'+av(pName,20)+'<span>'+pName+'</span></div><div style="display:flex;gap:9px;align-items:center"><span style="color:#52525b">вход: <b style="color:#a1a1aa">'+e.buyin+'₽</b></span>'+(e.cashout!=null?'<span style="color:#52525b">выход: <b style="color:#a1a1aa">'+e.cashout+'₽</b></span>':'')+(diff!==null?'<span style="font-weight:700;color:'+(diff>=0?'#4ade80':'#f87171')+'">'+fmt(diff)+'</span>':'')+'</div></div>';
+    sl.innerHTML=sArr.map(function(s){
+      var entries=Object.values(s.entries||{});
+      var totalBuy=entries.reduce(function(a,e){return a+(e.buyin||0);},0);
+      var done=entries.length>0&&entries.every(function(e){return e.cashout!=null;});
+      var dateStr=s.date?new Date(s.date+'T00:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'';
+      var rows=entries.map(function(e){
+        var pName=(players[e.playerId]||{}).name||'?';
+        var diff=e.cashout!=null?e.cashout-e.buyin:null;
+        return '<div class="serow"><div class="serow-left">'+av(pName,24)+'<span>'+pName+'</span></div><div class="serow-right"><span style="color:var(--muted);font-size:12px">+'+e.buyin+'€</span>'+(e.cashout!=null?'<span style="color:var(--muted);font-size:12px">→ '+e.cashout+'€</span>':'')+(diff!==null?'<span style="font-weight:700;color:'+(diff>=0?'#4ade80':'#f87171')+'">'+fmt(diff)+'</span>':'')+'</div></div>';
       }).join('');
-      return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px"><div><div style="font-size:15px;font-weight:600">'+(s.name||'Игра')+'</div><div style="font-size:12px;color:#52525b;margin-top:2px">'+dateStr+'</div></div><div style="display:flex;gap:5px;align-items:center"><span class="tag '+(done?'tdone':'topen')+'">'+(done?'закрыта':'идёт')+'</span><button class="btn bsm" onclick="editSession(\''+s.id+'\')">✏️</button><button class="btn bsm bdng" onclick="deleteSession(\''+s.id+'\')">✕</button></div></div>'+rows+'<div class="smeta">Банк: '+totalBuy+'₽ · '+entries.length+' игроков</div></div>';
+      return '<div class="scard"><div class="scard-head"><div><div class="scard-title">'+suit(s.name||'')+' '+(s.name||'Игра')+'</div><div class="scard-date">'+dateStr+'</div></div><div class="scard-actions"><span class="tag '+(done?'tdone':'topen')+'">'+(done?'✓ закрыта':'▶ идёт')+'</span><button class="btn btn-sm" onclick="editSession(\''+s.id+'\')">✏️</button><button class="btn-danger" onclick="deleteSession(\''+s.id+'\')">✕</button></div></div>'+rows+'<div class="smeta">Банк: <b style="color:var(--gold)">'+totalBuy+'€</b> · '+entries.length+' игроков</div></div>';
     }).join('');
   }
 
-  var pl = document.getElementById('plist');
-  if (!pArr.length) {
-    pl.innerHTML='<div style="color:#52525b;font-size:14px;padding:10px 0">Пока никого нет</div>';
+  // PLAYERS
+  var pl=document.getElementById('plist');
+  if(!pArr.length){
+    pl.innerHTML='<div style="color:var(--muted);font-size:14px;padding:12px 0">Пока никого нет</div>';
   } else {
-    pl.innerHTML = pArr.map(function(p){
-      var v = net[p.id]||0;
-      var gp = sArr.filter(function(s){return Object.values(s.entries||{}).some(function(e){return e.playerId===p.id;});}).length;
-      return '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:9px">'+av(p.name,34)+'<div><div style="font-size:14px;font-weight:600">'+p.name+'</div><div style="font-size:12px;color:#52525b">'+gp+' игр</div></div></div><div style="display:flex;align-items:center;gap:7px"><div style="font-size:16px;font-weight:700;color:'+(v>0?'#4ade80':v<0?'#f87171':'#52525b')+'">'+fmt(v)+'</div><button class="btn bsm bdng" onclick="removePlayer(\''+p.id+'\')">✕</button></div></div>';
+    pl.innerHTML=pArr.map(function(p){
+      var gp=sArr.filter(function(s){return Object.values(s.entries||{}).some(function(e){return e.playerId===p.id;});}).length;
+      return '<div class="pcard"><div style="display:flex;align-items:center;gap:10px">'+av(p.name,38)+'<div><div style="font-size:15px;font-weight:600">'+p.name+'</div><div style="font-size:11px;color:var(--muted)">'+suit(p.name)+' '+gp+' игр</div></div></div><button class="btn-danger" onclick="removePlayer(\''+p.id+'\')">✕</button></div>';
     }).join('');
   }
 }
 
-function showTab(name, btn) {
-  ['ov','se','pl'].forEach(function(t){ document.getElementById('t-'+t).style.display = t===name?'block':'none'; });
-  document.querySelectorAll('.tbtn').forEach(function(b){ b.classList.remove('on'); });
+function showTab(name,btn){
+  ['se','pl'].forEach(function(t){document.getElementById('t-'+t).style.display=t===name?'block':'none';});
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
   btn.classList.add('on');
 }
 
-function addPlayer() {
-  var inp = document.getElementById('plinput');
-  var name = inp.value.trim();
-  if (!name) return;
-  var id = uid();
-  db.ref('/players/'+id).set({ id: id, name: name }, function(err){
-    if (err) alert('Ошибка: '+err.message);
-  });
-  inp.value = '';
+function addPlayer(){
+  var inp=document.getElementById('plinput');
+  var name=inp.value.trim(); if(!name)return;
+  db.ref('/players/'+uid()).set({id:uid(),name:name},function(err){if(err)alert(err.message);});
+  inp.value='';
 }
 
-function removePlayer(id) {
-  if (!confirm('Удалить игрока?')) return;
+function removePlayer(id){
+  if(!confirm('Удалить?'))return;
   db.ref('/players/'+id).remove();
 }
 
-function entryRow(playerId, name, buyin, cashout) {
-  return '<div class="erow">'+av(name,25)+'<div class="ename">'+name+'</div><div style="flex:1"><div style="font-size:10px;color:#52525b;margin-bottom:3px">Депозит</div><input class="einp" type="number" placeholder="0" value="'+buyin+'" data-player="'+playerId+'" data-field="buyin"></div><div style="flex:1"><div style="font-size:10px;color:#52525b;margin-bottom:3px">Кэшаут</div><input class="einp" type="number" placeholder="—" value="'+cashout+'" data-player="'+playerId+'" data-field="cashout"></div></div>';
+function entryCard(pid,name,buyin,cashout){
+  return '<div class="ecard"><div class="ecard-top">'+av(name,28)+'<div class="ecard-name">'+name+' <span style="opacity:.35">'+suit(name)+'</span></div></div><div class="einputs"><div class="einp-wrap"><div class="einp-label">Депозит €</div><input class="einp" type="number" inputmode="decimal" placeholder="0" value="'+buyin+'" data-player="'+pid+'" data-field="buyin"></div><div class="einp-wrap"><div class="einp-label">Кэшаут €</div><input class="einp" type="number" inputmode="decimal" placeholder="—" value="'+cashout+'" data-player="'+pid+'" data-field="cashout"></div></div></div>';
 }
 
-function openNewSession() {
-  editId = null;
-  document.getElementById('mtitle').textContent = 'Новая игра';
-  var pArr = Object.values(state.players||{});
-  document.getElementById('mname').value = 'Игра '+(Object.keys(state.sessions||{}).length+1);
-  document.getElementById('mdate').value = new Date().toISOString().slice(0,10);
-  document.getElementById('mentries').innerHTML = pArr.length
-    ? pArr.map(function(p){ return entryRow(p.id,p.name,'',''); }).join('')
-    : '<div style="color:#52525b;font-size:13px">Сначала добавь игроков</div>';
-  document.getElementById('modal').style.display = 'flex';
+function openNewSession(){
+  editId=null;
+  document.getElementById('mtitle').textContent='Новая игра';
+  var pArr=Object.values(state.players||{});
+  document.getElementById('mname').value='Игра '+(Object.keys(state.sessions||{}).length+1);
+  document.getElementById('mdate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('mentries').innerHTML=pArr.length
+    ?pArr.map(function(p){return entryCard(p.id,p.name,'','');}).join('')
+    :'<div style="color:var(--muted);font-size:13px;padding:12px 0">Сначала добавь игроков на вкладке «Игроки»</div>';
+  document.getElementById('modal').style.display='flex';
 }
 
-function editSession(id) {
-  editId = id;
-  var s = state.sessions[id]; if (!s) return;
-  document.getElementById('mtitle').textContent = 'Редактировать';
-  document.getElementById('mname').value = s.name||'';
-  document.getElementById('mdate').value = s.date||'';
-  var pArr = Object.values(state.players||{});
-  document.getElementById('mentries').innerHTML = pArr.map(function(p){
-    var entries = Object.values(s.entries||{});
-    var e = entries.find(function(x){return x.playerId===p.id;});
-    return entryRow(p.id, p.name, e?e.buyin:'', e&&e.cashout!=null?e.cashout:'');
+function editSession(id){
+  editId=id;
+  var s=state.sessions[id]; if(!s)return;
+  document.getElementById('mtitle').textContent='Редактировать';
+  document.getElementById('mname').value=s.name||'';
+  document.getElementById('mdate').value=s.date||'';
+  var pArr=Object.values(state.players||{});
+  document.getElementById('mentries').innerHTML=pArr.map(function(p){
+    var e=Object.values(s.entries||{}).find(function(x){return x.playerId===p.id;});
+    return entryCard(p.id,p.name,e?e.buyin:'',e&&e.cashout!=null?e.cashout:'');
   }).join('');
-  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('modal').style.display='flex';
 }
 
-function saveSession() {
-  var name = document.getElementById('mname').value.trim()||'Игра';
-  var date = document.getElementById('mdate').value;
-  var inputs = document.querySelectorAll('#mentries [data-player]');
-  var em = {};
-  inputs.forEach(function(inp){
-    var pid = inp.getAttribute('data-player');
-    if (!em[pid]) em[pid] = { playerId: pid };
-    var v = inp.value.trim();
-    if (inp.getAttribute('data-field')==='buyin') em[pid].buyin = v===''?0:parseFloat(v)||0;
-    if (inp.getAttribute('data-field')==='cashout' && v!=='') em[pid].cashout = parseFloat(v)||0;
+function saveSession(){
+  var name=document.getElementById('mname').value.trim()||'Игра';
+  var date=document.getElementById('mdate').value;
+  var em={};
+  document.querySelectorAll('#mentries [data-player]').forEach(function(inp){
+    var pid=inp.getAttribute('data-player');
+    if(!em[pid])em[pid]={playerId:pid};
+    var v=inp.value.trim();
+    if(inp.getAttribute('data-field')==='buyin')em[pid].buyin=v===''?0:parseFloat(v)||0;
+    if(inp.getAttribute('data-field')==='cashout'&&v!=='')em[pid].cashout=parseFloat(v)||0;
   });
-  var entries = {};
-  Object.values(em).forEach(function(e){ if (e.buyin>0||e.cashout!=null) entries[uid()] = e; });
-  var id = editId||uid();
-  db.ref('/sessions/'+id).set({ id:id, name:name, date:date, entries:entries }, function(err){
-    if (err) alert('Ошибка: '+err.message);
-  });
+  var entries={};
+  Object.values(em).forEach(function(e){if(e.buyin>0||e.cashout!=null)entries[uid()]=e;});
+  var id=editId||uid();
+  db.ref('/sessions/'+id).set({id:id,name:name,date:date,entries:entries},function(err){if(err)alert(err.message);});
   closeModal();
 }
 
-function deleteSession(id) {
-  if (!confirm('Удалить игру?')) return;
+function deleteSession(id){
+  if(!confirm('Удалить игру?'))return;
   db.ref('/sessions/'+id).remove();
 }
 
-function closeModal() { document.getElementById('modal').style.display = 'none'; }
+function closeModal(){document.getElementById('modal').style.display='none';}
 </script>
 </body>
 </html>
