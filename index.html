@@ -10,21 +10,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e4e4e7; min-height: 100vh; }
 #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #52525b; }
-#setup { display: none; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-.sbox { background: #1c1f2a; border: 1px solid #2a2d3a; border-radius: 16px; padding: 28px; max-width: 460px; width: 100%; }
-.sbox h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-.sbox > p { color: #71717a; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
-.sstep { background: #13151e; border: 1px solid #2a2d3a; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
-.sstep label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px; }
-.snum { display: inline-flex; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; font-size: 10px; font-weight: 700; align-items: center; justify-content: center; margin-right: 6px; flex-shrink: 0; }
-.sstep input { width: 100%; padding: 8px 11px; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 7px; color: #e4e4e7; font-size: 13px; outline: none; margin-bottom: 6px; }
-.sstep input:last-of-type { margin-bottom: 0; }
-.sstep input:focus { border-color: #3b82f6; }
-.hint { font-size: 11px; color: #52525b; line-height: 1.5; margin-top: 4px; }
-.fblink { display: inline-block; padding: 7px 13px; background: #1d4ed8; border-radius: 7px; color: #fff; font-size: 13px; text-decoration: none; margin-bottom: 8px; }
-.sbtn { width: 100%; padding: 11px; background: #3b82f6; border: none; border-radius: 9px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 6px; }
-.sbtn:hover { background: #2563eb; }
-#serr { color: #f87171; font-size: 12px; margin-top: 6px; display: none; }
 #app { display: none; max-width: 600px; margin: 0 auto; padding: 0 16px 80px; }
 .hdr { padding: 18px 0 0; border-bottom: 1px solid #2a2d3a; }
 .hdr-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; }
@@ -76,31 +61,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 <div id="loading">Загрузка...</div>
 
-<div id="setup">
-  <div class="sbox">
-    <h1>♠ Покер-трекер</h1>
-    <p>Нужна бесплатная Firebase — займёт ~3 мин.</p>
-    <div class="sstep">
-      <label><span class="snum">1</span>Создай проект Firebase</label>
-      <a class="fblink" href="https://console.firebase.google.com" target="_blank">Открыть Firebase Console →</a>
-      <div class="hint">«Добавить проект» → имя → отключи Analytics → создай</div>
-    </div>
-    <div class="sstep">
-      <label><span class="snum">2</span>Создай Realtime Database</label>
-      <div class="hint">Сборка → Realtime Database → Создать базу данных → любой регион → «Начать в тестовом режиме»</div>
-    </div>
-    <div class="sstep">
-      <label><span class="snum">3</span>Вставь данные проекта</label>
-      <input type="text" id="s-dburl" placeholder="Database URL: https://poker-xxx-default-rtdb.firebaseio.com">
-      <input type="text" id="s-apikey" placeholder="API Key: AIza...">
-      <input type="text" id="s-projid" placeholder="Project ID: poker-6d7d1">
-      <div class="hint">⚙️ Настройки проекта → Общие → Ваши приложения → выбери Web-приложение</div>
-    </div>
-    <button class="sbtn" onclick="doSetup()">Готово →</button>
-    <div id="serr"></div>
-  </div>
-</div>
-
 <div id="app">
   <div class="hdr">
     <div class="hdr-top">
@@ -150,54 +110,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 var db = null;
 var state = { players: {}, sessions: {} };
 var editId = null;
-var CFG_KEY = 'poker_firebase_config';
 
-function getConfig() {
-  try { return JSON.parse(localStorage.getItem(CFG_KEY)); } catch(e) { return null; }
-}
+firebase.initializeApp({
+  apiKey: "AIzaSyBFT4ctpoM7DzAhh-locoQcusxGG8SiH-k",
+  databaseURL: "https://poker-6d7d1-default-rtdb.firebaseio.com/",
+  projectId: "poker-6d7d1",
+  authDomain: "poker-6d7d1.firebaseapp.com"
+});
 
-function doSetup() {
-  var dburl = document.getElementById('s-dburl').value.trim();
-  var apikey = document.getElementById('s-apikey').value.trim();
-  var projid = document.getElementById('s-projid').value.trim();
-  var err = document.getElementById('serr');
-  if (!dburl || !apikey || !projid) { err.textContent='Заполни все поля'; err.style.display='block'; return; }
-  if (!dburl.startsWith('https://')) { err.textContent='URL должен начинаться с https://'; err.style.display='block'; return; }
-  var cfg = { apiKey: apikey, databaseURL: dburl, projectId: projid, authDomain: projid+'.firebaseapp.com' };
-  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
-  window.location.reload();
-}
+db = firebase.database();
+document.getElementById('loading').style.display = 'none';
+document.getElementById('app').style.display = 'block';
 
-function startApp(cfg) {
-  try {
-    firebase.initializeApp(cfg);
-    db = firebase.database();
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    db.ref('/').on('value', function(snap) {
-      state = snap.val() || {};
-      if (!state.players) state.players = {};
-      if (!state.sessions) state.sessions = {};
-      render();
-    }, function(err) {
-      alert('Ошибка Firebase: ' + err.message);
-    });
-  } catch(e) {
-    alert('Ошибка инициализации: ' + e.message);
-    localStorage.removeItem(CFG_KEY);
-    window.location.reload();
-  }
-}
+db.ref('/').on('value', function(snap) {
+  state = snap.val() || {};
+  if (!state.players) state.players = {};
+  if (!state.sessions) state.sessions = {};
+  render();
+}, function(err) {
+  alert('Ошибка Firebase: ' + err.message);
+});
 
-var cfg = getConfig();
-if (cfg) {
-  startApp(cfg);
-} else {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('setup').style.display = 'flex';
-}
-
-// ===== UTILS =====
 var COLS = ['#3b82f6','#8b5cf6','#ec4899','#10b981','#f59e0b','#ef4444','#06b6d4','#84cc16'];
 function acol(n) { return COLS[(n||'?').charCodeAt(0) % COLS.length]; }
 function av(n, s) {
